@@ -17,10 +17,10 @@ public class Task {
 
     public Task() {}
 
-    public Task(String title, String description, String status) {
+    public Task(String title, String description) {
         this.description = description;
         this.title = title;
-        this.status = status;
+        this.status = "Available";
     }
 
     @DynamoDBHashKey
