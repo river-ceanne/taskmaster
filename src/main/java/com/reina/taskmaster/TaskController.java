@@ -19,7 +19,7 @@ public class TaskController {
     @Autowired
     TaskRepository taskRepository;
 
-    protected final String[] state = {"Available", "Assigned","Accepted", "Finished"};
+    protected static String[] state = {"Available", "Assigned","Accepted", "Finished"};
 
     @GetMapping("/tasks")
     public ResponseEntity<Task> getTasks() {
@@ -33,6 +33,13 @@ public class TaskController {
         return new ResponseEntity(task, HttpStatus.OK);
     }
 
+
+//    @GetMapping("/task/{id}")
+//    public String getTask(@PathVariable String id) {
+//        return "redirect:/tasks";
+//    }
+
+
     @PostMapping("/tasks")
     public void createTask( String title, String description) {
         Task task = new Task(title,description);
@@ -40,22 +47,26 @@ public class TaskController {
     }
 
     @PutMapping("/tasks/{id}/state")
-    public void advanceTask(@PathVariable String id) throws ParseException {
-        Optional<Task> task = taskRepository.findById(id);
+    public String advanceTask(@PathVariable UUID id) {
+        Task task = taskRepository.findById(id);
+        String newStatus = "--";
 
-        System.out.println(task);
+        if(task.getStatus() != state[3]){
+            for (int i = 0; i < state.length; i++) {
+                if (task.getStatus() == state[i]) {
+                    i++;
+                    newStatus = state[i];
+                    break;
+                }
+            }
 
-        task.ifPresent( value -> {
-//            for (int i = 0; i < state.length; i++) {
-//                if (task.get().getStatus() == state[i]) {
-//                    task.get().setStatus(state[++i]);
-//                    break;
-//                }
-//            }
-            task.get().setStatus("Assigned");
+        }
 
-            taskRepository.save(task.get());
-        });
+        task.setStatus(newStatus);
+//        task.setStatus(state[0]);
+        taskRepository.save(task);
+
+        return "redirect:/tasks";
 
     }
 
