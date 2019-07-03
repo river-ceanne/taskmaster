@@ -49,25 +49,31 @@ public class TaskController {
     @PutMapping("/tasks/{id}/state")
     public String advanceTask(@PathVariable UUID id) {
         Task task = taskRepository.findById(id);
-        String newStatus = "--";
 
-        if(task.getStatus() != state[3]){
-            for (int i = 0; i < state.length; i++) {
-                if (task.getStatus() == state[i]) {
-                    i++;
-                    newStatus = state[i];
-                    break;
-                }
-            }
+        if(task == null) return "redirect:/tasks";
 
-        }
 
-        task.setStatus(newStatus);
+
+        task.setStatus(nextStatus(task.getStatus()));
 //        task.setStatus(state[0]);
         taskRepository.save(task);
 
         return "redirect:/tasks";
 
+    }
+
+    private String nextStatus(String status){
+        String nextStatus = status;
+
+        if(!status.equals(state[3])){
+            for (int i = 0; i < state.length; i++) {
+                if (status.equals(state[i])) {
+                    return state[++i];
+                }
+            }
+
+        }
+        return nextStatus;
     }
 
 
