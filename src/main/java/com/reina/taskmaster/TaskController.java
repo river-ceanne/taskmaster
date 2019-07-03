@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import java.text.ParseException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public class TaskController {
 
     protected static String[] state = {"Available", "Assigned","Accepted", "Finished"};
 
-    @GetMapping("/tasks")
+    @GetMapping({"/tasks","/"})
     public ResponseEntity<Task> getTasks() {
         Iterable<Task> tasks = taskRepository.findAll();
         return new ResponseEntity(tasks, HttpStatus.OK);
@@ -33,17 +34,25 @@ public class TaskController {
         return new ResponseEntity(task, HttpStatus.OK);
     }
 
-
-//    @GetMapping("/task/{id}")
-//    public String getTask(@PathVariable String id) {
-//        return "redirect:/tasks";
-//    }
+    @GetMapping("/users/{name}/tasks")
+    public ResponseEntity<Task> getUserTasks(@PathVariable String name) {
+        List<Task> tasks = taskRepository.findByAssignee(name);
+        return new ResponseEntity(tasks, HttpStatus.OK);
+    }
 
 
     @PostMapping("/tasks")
-    public void createTask( String title, String description) {
-        Task task = new Task(title,description);
+    public ResponseEntity<Task> createTask( String title, String description, String assignee) {
+        Task task;
+        if(assignee != null){
+            task = new Task(title,description,assignee);
+        }else{
+            task = new Task(title,description);
+        }
+
         taskRepository.save(task);
+
+        return new ResponseEntity(task, HttpStatus.OK);
     }
 
     @PutMapping("/tasks/{id}/state")
@@ -52,8 +61,6 @@ public class TaskController {
 
         if(task == null) return "redirect:/tasks";
 
-
-
         task.setStatus(nextStatus(task.getStatus()));
 //        task.setStatus(state[0]);
         taskRepository.save(task);
@@ -61,6 +68,21 @@ public class TaskController {
         return "redirect:/tasks";
 
     }
+
+    @PutMapping("/tasks/{id}/assign/{assignee}")
+    public String assignTask(@PathVariable UUID id, @PathVariable String assignee) {
+        Task task = taskRepository.findById(id);
+
+        if(task == null) return "redirect:/tasks";
+
+        task.setStatus(state[1]);//set to Assigned state
+        task.setAssignee(assignee);
+        taskRepository.save(task);
+
+        return "redirect:/tasks";
+
+    }
+
 
     private String nextStatus(String status){
         String nextStatus = status;

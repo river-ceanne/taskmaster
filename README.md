@@ -13,6 +13,7 @@ Java application made with SpringBoot and DynamoDB for task management purposes.
     - title :String
     - description :String
     - status :String
+    - assignee:String
 
 ## Routes
 
@@ -22,12 +23,20 @@ Java application made with SpringBoot and DynamoDB for task management purposes.
 
 * @PostMapping("/tasks")
       
-        public void createTask( String title, String description)
+        public ResponseEntity<Task> createTask( String title, String description, String assignee)
         
 * @PutMapping("/tasks/{id}/state")
       
         public void advanceTask(@PathVariable String id)
         
+* @GetMapping("/users/{name}/tasks")
+      
+        public ResponseEntity<Task> getUserTasks(@PathVariable String name)
+
+* @PutMapping("/tasks/{id}/assign/{assignee}")
+      
+        public String assignTask(@PathVariable UUID id, @PathVariable String assignee)
         
 
 ### Deployed application:
+[http://Taskmaster-env.csiiybveap.us-east-1.elasticbeanstalk.com](http://Taskmaster-env.csiiybveap.us-east-1.elasticbeanstalk.com)
