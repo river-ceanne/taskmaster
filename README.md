@@ -31,3 +31,4 @@ Java application made with SpringBoot and DynamoDB for task management purposes.
         
 
 ### Deployed application:
+[http://Taskmaster-env.csiiybveap.us-east-1.elasticbeanstalk.com](http://Taskmaster-env.csiiybveap.us-east-1.elasticbeanstalk.com)
