@@ -13,6 +13,7 @@ Java application made with SpringBoot and DynamoDB for task management purposes.
     - title :String
     - description :String
     - status :String
+    - assignee:String
 
 ## Routes
 
