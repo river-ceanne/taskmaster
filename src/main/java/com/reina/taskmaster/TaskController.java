@@ -42,7 +42,7 @@ public class TaskController {
 
 
     @PostMapping("/tasks")
-    public void createTask( String title, String description, String assignee) {
+    public ResponseEntity<Task> createTask( String title, String description, String assignee) {
         Task task;
         if(assignee != null){
             task = new Task(title,description,assignee);
@@ -51,6 +51,8 @@ public class TaskController {
         }
 
         taskRepository.save(task);
+
+        return new ResponseEntity(task, HttpStatus.OK);
     }
 
     @PutMapping("/tasks/{id}/state")
@@ -61,6 +63,20 @@ public class TaskController {
 
         task.setStatus(nextStatus(task.getStatus()));
 //        task.setStatus(state[0]);
+        taskRepository.save(task);
+
+        return "redirect:/tasks";
+
+    }
+
+    @PutMapping("/tasks/{id}/assign/{assignee}")
+    public String assignTask(@PathVariable UUID id, @PathVariable String assignee) {
+        Task task = taskRepository.findById(id);
+
+        if(task == null) return "redirect:/tasks";
+
+        task.setStatus(state[1]);//set to Assigned state
+        task.setAssignee(assignee);
         taskRepository.save(task);
 
         return "redirect:/tasks";
