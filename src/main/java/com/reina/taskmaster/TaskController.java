@@ -62,7 +62,6 @@ public class TaskController {
         if(task == null) return "redirect:/tasks";
 
         task.setStatus(nextStatus(task.getStatus()));
-//        task.setStatus(state[0]);
         taskRepository.save(task);
 
         return "redirect:/tasks";
