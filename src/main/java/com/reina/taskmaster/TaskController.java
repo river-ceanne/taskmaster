@@ -5,17 +5,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
+@CrossOrigin
 @Controller
 public class TaskController {
 
+    private S3Client s3Client;
+
     @Autowired
     TaskRepository taskRepository;
+
+    @Autowired
+    TaskController(S3Client s3Client) {
+        this.s3Client = s3Client;
+    }
 
     protected static String[] state = {"Available", "Assigned","Accepted", "Finished"};
 
@@ -27,7 +37,7 @@ public class TaskController {
     }
 
     @CrossOrigin
-    @GetMapping("/task/{id}")
+    @GetMapping("/tasks/{id}")
     public ResponseEntity<Task> getTask(@PathVariable UUID id) {
         Task task = taskRepository.findById(id);
         return new ResponseEntity(task, HttpStatus.OK);
@@ -82,6 +92,18 @@ public class TaskController {
 
         return "redirect:/tasks";
 
+    }
+
+    @CrossOrigin
+    @PostMapping("/tasks/{id}/images")
+    public ResponseEntity<Task> uploadImage(@PathVariable UUID id, @RequestPart(value = "file") MultipartFile file) {
+        Task task = taskRepository.findById(id);
+
+        String pic = this.s3Client.uploadFile(file);
+        task.setImageurl(pic);
+        taskRepository.save(task);
+
+        return new ResponseEntity(task, HttpStatus.OK);
     }
 
 
