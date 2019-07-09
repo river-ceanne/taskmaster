@@ -37,7 +37,7 @@ public class TaskController {
     }
 
     @CrossOrigin
-    @GetMapping("/task/{id}")
+    @GetMapping("/tasks/{id}")
     public ResponseEntity<Task> getTask(@PathVariable UUID id) {
         Task task = taskRepository.findById(id);
         return new ResponseEntity(task, HttpStatus.OK);
