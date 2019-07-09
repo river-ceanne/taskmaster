@@ -36,7 +36,14 @@ Java application made with SpringBoot and DynamoDB for task management purposes.
 * @PutMapping("/tasks/{id}/assign/{assignee}")
       
         public String assignTask(@PathVariable UUID id, @PathVariable String assignee)
+
+* @GetMapping("/tasks/{id}")
         
+        public ResponseEntity<Task> getTask(@PathVariable UUID id)
+        
+* @PostMapping("/tasks/{id}/images")
+
+        public ResponseEntity<Task> uploadImage(@PathVariable UUID id, @RequestPart(value = "file") MultipartFile file)                 
 
 ### Deployed application:
 [http://Taskmaster-env.csiiybveap.us-east-1.elasticbeanstalk.com](http://Taskmaster-env.csiiybveap.us-east-1.elasticbeanstalk.com)
